@@ -10,8 +10,8 @@
   </head>
   <body>
     <div id="header">
-      <div style="margin-left: 10px">
-        Interface Sample Website
+      <div style="margin-left: 10px; font-size:bold">
+			Logic Peripherals Australia (LPA)
       </div>
     </div>
     <div style="float:right">Welcome <?php echo $displayName; ?></div>
