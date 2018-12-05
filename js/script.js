@@ -3,6 +3,8 @@ function clickme() {
 }
 function navMan(URL) {
     window.location = URL;
+	
+	
 }
 function addToCart(ID) {
     var qty = document.getElementById("fldQTY-"+ID).value;
