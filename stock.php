@@ -12,34 +12,40 @@
   build_header($displayName);
 ?>
   <?PHP build_navBlock(); ?>
+  <div class="container">
   <div id="content">
-    <div class="PageTitle">Stock Management Search</div>
-
-  <!-- Search Section Start -->
-    <form name="frmSearchStock" method="post"
-          id="frmSearchStock"
-          action="<?PHP echo $_SERVER['PHP_SELF']; ?>">
-      <div class="displayPane">
-        <div class="displayPaneCaption">Search:</div>
-        <div>
-          <input name="txtSearch" id="txtSearch" placeholder="Search Stock"
-          style="width: calc(100% - 115px)" value="<?PHP echo $txtSearch; ?>">
-          <button type="button" id="btnSearch">Search</button>
-          <button type="button" id="btnAddRec">Add</button>
+    <!-- Search Section Start -->
+    <div class="jumbotron">
+      <h1 class="display-4">Stock Management Search</h1>
+      <p class="lead">Search and edit the content or information from the stock products.</p>
+      <hr class="my-4">
+      <form name="frmSearchStock" method="post"
+            id="frmSearchStock"
+            action="<?PHP echo $_SERVER['PHP_SELF']; ?>">
+        <div class="form-group">
+          <div align="center" style="width: 100%">
+            <input name="txtSearch" class="form-control" id="txtSearch" placeholder="Search Stock" value="<?PHP echo $txtSearch; ?>">
+          </div>
         </div>
-      </div>
-      <input type="hidden" name="a" value="listStock">
-    </form>
+        <div class="formFooter" align="right" style="width: 100%">
+            <button type="button" class="btn btn-info btn-lg" id="btnSearch">Search</button>
+            <button type="button" class="btn btn-primary btn-lg" id="btnAddRec">Add</button>
+        </div>
+        <input type="hidden" name="a" value="listStock">
+      </form>
+    </div>
     <!-- Search Section End -->
     <!-- Search Section List Start -->
     <?PHP
       if($action == "listStock") {
     ?>
-    <div>
-      <table style="width: calc(100% - 15px);border: #cccccc solid 1px">
-        <tr style="background: #eeeeee">
-          <td style="width: 80px;border-left: #cccccc solid 1px"><b>Stock Code</b></td>
+    </br>
+    <div align="center">
+      <table class="table table-hover" style="width: calc(100% - 15px);">
+        <tr style="background: #ddd">
+          <td style="width: 120px;"><b>Stock Code</b></td>
           <td style="border-left: #cccccc solid 1px"><b>Stock Name</b></td>
+          <td style="width: 80px;"><b>Status</b></td>
           <td style="width: 80px;text-align: right"><b>Price</b></td>
         </tr>
     <?PHP
@@ -61,15 +67,18 @@
         while ($row = $result->fetch_assoc()) {
           $sid = $row['lpa_stock_ID'];
           ?>
-          <tr class="hl">
+          <tr class="hl" style="border-bottom: #cccccc solid 1px">
             <td onclick="loadStockItem(<?PHP echo $sid; ?>,'Edit')"
-                style="cursor: pointer;border-left: #cccccc solid 1px">
+                style="cursor: pointer;">
               <?PHP echo $sid; ?>
             </td>
             <td onclick="loadStockItem(<?PHP echo $sid; ?>,'Edit')"
                 style="cursor: pointer;border-left: #cccccc solid 1px">
                 <?PHP echo $row['lpa_stock_name']; ?>
             </td>
+            <td <?php if($row['lpa_stock_status'] == 'i'){ echo 'class="inactiveItem"';} else { echo 'class="activeItem"';} ?>>
+              <strong><?php if($row['lpa_stock_status'] == 'a'){ echo 'Active';} else {echo 'Inactive';} ?></strong>
+            </td>            
             <td style="text-align: right">
               <?PHP echo $row['lpa_stock_price']; ?>
             </td>
@@ -87,6 +96,7 @@
     <?PHP } ?>
     <!-- Search Section List End -->
   </div>
+  </br></br>
   <script>
     var action = "<?PHP echo $action; ?>";
     var search = "<?PHP echo $txtSearch; ?>";
@@ -116,6 +126,7 @@
       $("#txtSearch").select().focus();
     },1);
   </script>
+  </div>
 <?PHP
 build_footer();
 ?>

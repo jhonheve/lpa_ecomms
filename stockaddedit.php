@@ -109,61 +109,61 @@
   }
   build_header($displayName);
   build_navBlock();
+  echo '<div class="container">';
   $fieldSpacer = "5px";
 ?>
 
+
   <div id="content">
-    <div class="PageTitle">Stock Record Management (<?PHP echo $action; ?>)</div>
-    <form name="frmStockRec" id="frmStockRec" method="post" action="<?PHP echo $_SERVER['PHP_SELF']; ?>">
-      <div>
-		<div>
-			<label for="txtStockID">Stock ID</label>
-		</div>			
-        <input name="txtStockID" id="txtStockID" placeholder="Stock ID" value="<?PHP echo $stockID; ?>" style="width: 100px;" title="Stock ID">
+    <div class="card text-center">
+      <div class="card-header" align="left">
+        Stock Record Management (<?PHP echo $action; ?>)
       </div>
-      <div style="margin-top: <?PHP echo $fieldSpacer; ?>">
-		<div>
-			<label for="txtStockName">Stock Name</label>
-		</div>
-        <input name="txtStockName" id="txtStockName" placeholder="Stock Name" value="<?PHP echo $stockName; ?>" style="width: 400px;"  title="Stock Name">
+      <div class="card-body" align="left">
+        <form name="frmStockRec" id="frmStockRec" method="post" action="<?PHP echo $_SERVER['PHP_SELF']; ?>">
+          <div class="form-group">
+            <label>ID</label>
+            <input name="txtStockID" id="txtStockID" class="form-control" placeholder="Stock ID" value="<?PHP echo $stockID; ?>" title="Stock ID">
+          </div>
+          <div class="form-group">
+            <label>Name</label>
+            <input name="txtStockName" id="txtStockName" class="form-control" placeholder="Stock Name" value="<?PHP echo $stockName; ?>"  title="Stock Name">
+          </div>
+          <div class="form-group">
+            <div>Description</div>
+            <textarea name="txtStockDesc" id="txtStockDesc" class="form-control" placeholder="Stock Description" title="Stock Description"><?PHP echo $stockDesc; ?></textarea>
+          </div>
+          <div class="form-group">
+            <label>Stock</label>
+            <input name="txtStockOnHand" id="txtStockOnHand" class="form-control" placeholder="Stock On-Hand" value="<?PHP echo $stockOnHand; ?>" title="Stock On-Hand">
+          </div>
+          <div class="form-group">
+            <label>Price</label>
+            <input name="txtStockPrice" id="txtStockPrice" class="form-control" placeholder="Stock Price" value="<?PHP echo $stockPrice; ?>" title="Stock Price">
+          </div>
+          <div class="form-group">
+            <div>Stock Status</div>
+            <input name="txtStatus" id="txtStockStatusActive" type="radio" value="a">
+              <label for="txtStockStatusActive">Active</label>
+            <input name="txtStatus" id="txtStockStatusInactive" type="radio" value="i">
+              <label for="txtStockStatusInactive">Inactive</label>
+          </div>
+          <input name="a" id="a" value="<?PHP echo $mode; ?>" type="hidden">
+          <input name="sid" id="sid" value="<?PHP echo $sid; ?>" type="hidden">
+          <input name="txtSearch" id="txtSearch" value="<?PHP echo $txtSearch; ?>" type="hidden">
+        </form>
       </div>
-      <div style="margin-top: <?PHP echo $fieldSpacer; ?>">
-		<div>
-			<label for="txtStockDesc">Stock Description</label>
-		</div>
-        <textarea name="txtStockDesc" id="txtStockDesc" placeholder="Stock Description" style="width: 400px;height: 80px"  title="Stock Description"><?PHP echo $stockDesc; ?></textarea>
+      <div class="card-footer text-muted" align="right">
+        <button type="button" class="btn btn-success" id="btnStockSave">Save</button>
+        <button type="button" class="btn btn-danger" onclick="navMan('stock.php')">Close</button>
+        <?PHP if($action == "Edit") { ?>
+        <button type="button" class="btn btn-outline-danger" onclick="delRec('<?PHP echo $sid; ?>')" style="margin-left: 20px">DELETE</button>
+        <?PHP } ?>
       </div>
-      <div style="margin-top: <?PHP echo $fieldSpacer; ?>">
-		<div>
-			<label for="txtStockOnHand">Stock on-hand</label>	  
-		</div>
-        <input name="txtStockOnHand" id="txtStockOnHand" placeholder="Stock On-Hand" value="<?PHP echo $stockOnHand; ?>" style="width: 90px;text-align: right"  title="Stock On-Hand">
-      </div>
-      <div style="margin-top: <?PHP echo $fieldSpacer; ?>">
-		<div>
-			<label for="txtStockPrice">Stock Price</label>	  	  
-		</div>
-        <input name="txtStockPrice" id="txtStockPrice" placeholder="Stock Price" value="<?PHP echo $stockPrice; ?>" style="width: 90px;text-align: right"  title="Stock Price">
-      </div>
-      <div style="margin-top: <?PHP echo $fieldSpacer; ?>">
-        <div>Stock Status:</div>
-        <input name="txtStatus" id="txtStockStatusActive" type="radio" value="a">
-          <label for="txtStockStatusActive">Active</label>
-        <input name="txtStatus" id="txtStockStatusInactive" type="radio" value="i">
-          <label for="txtStockStatusInactive">Inactive</label>
-      </div>
-      <input name="a" id="a" value="<?PHP echo $mode; ?>" type="hidden">
-      <input name="sid" id="sid" value="<?PHP echo $sid; ?>" type="hidden">
-      <input name="txtSearch" id="txtSearch" value="<?PHP echo $txtSearch; ?>" type="hidden">
-    </form>
-    <div class="optBar">
-      <button type="button" id="btnStockSave">Save</button>
-      <button type="button" onclick="navMan('stock.php')">Close</button>
-      <?PHP if($action == "Edit") { ?>
-      <button type="button" onclick="delRec('<?PHP echo $sid; ?>')" style="color: darkred; margin-left: 20px">DELETE</button>
-      <?PHP } ?>
     </div>
   </div>
+</div>
+  </br></br>
   <script>
     var stockRecStatus = "<?PHP echo $stockStatus; ?>";
     if(stockRecStatus == "a") {

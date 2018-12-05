@@ -5,7 +5,6 @@
  */
 date_default_timezone_set('Australia/Queensland');
 
-
 /**
  * Global variables
  */
@@ -13,6 +12,7 @@ date_default_timezone_set('Australia/Queensland');
 // Database instance variable
 $db = null;
 $displayName = "";
+$numItemsCart = 0;
 
 
 // Start the session
@@ -22,6 +22,9 @@ session_start();
 isset($_SESSION["authUser"])?
   $authUser = $_SESSION["authUser"] :
   $authUser = "";
+isset($_SESSION["isAdmin"])?
+  $isAdmin = $_SESSION["isAdmin"] :
+  $isAdmin = "";
 
 if(isset($authChk) == true) {
   if($authUser) {
@@ -30,9 +33,29 @@ if(isset($authChk) == true) {
     $result = $db->query($query);
     $row = $result->fetch_assoc();
     $displayName = $row['lpa_user_firstname']." ".$row['lpa_user_lastname'];
+    $msg = "Success login USER_ID=".$authUser;
+    file_log($msg);
   } else {
     header("location: login.php");
   }
+}
+
+if(isset($adminChk) == true) {
+	if(!$isAdmin)
+	{
+		header("location: index.php");
+	}
+}
+
+/**
+* Log file 
+**/
+function file_log($msg){
+  $current = "";
+  $myfile = fopen("lpalog.log", "r+");
+  $current = fread($myfile,9999);
+  fwrite($myfile, "[".date("H:i:s d-m-Y")."]  ".$msg.";"."\n");
+  fclose($myfile);
 }
 
 /**
@@ -45,17 +68,20 @@ function openDB() {
     /* Conection String eg.: mysqli("localhost", "lpaecomms", "letmein", "lpaecomms")
      *   - Replace the connection string tags below with your MySQL parameters
      */
-    $db = new mysqli(
+     $db = new mysqli(
       "localhost",
-      "lpa_ecomms",
-      "5XmvHX4djjzQRMRS",
+      "root",
+      "",
       "lpa_ecomms"
     );
     if ($db->connect_errno) {
-      echo "Failed to connect to MySQL: (" .
+      $msg = "Failed to connect to MySQL: (" .
         $db->connect_errno . ") " .
         $db->connect_error;
+        echo $msg;
+        file_log($msg);
     }
+	
   }
 }
 
@@ -72,6 +98,7 @@ function closeDB() {
     }
   } catch (Exception $e)
   {
+    file_log('Error closing database');
     throw new Exception( 'Error closing database', 0, $e);
   }
 }
@@ -107,19 +134,63 @@ function build_header() {
   include 'header.php';
 }
 
-
+/**
+ *  Build the cart icon
+ */
+function build_cartIcon() {
+  isset($_COOKIE['prod_id'])? $itmID = $_COOKIE['prod_id'] : $itmID = "";
+  $splitItmID = explode("%$", $itmID);
+  global $numItemsCart;
+  $numItemsCart = count($splitItmID);
+  echo $numItemsCart;
+}
 /**
  * Build the Navigation block
  */
-function build_navBlock() { ?>
-    <div id="navBlock">
-      <div id="navHeader">MAIN MENU</div>
-      <div class="navItem" onclick="navMan('index.php')">HOME</div>
-      <div class="navItem" onclick="navMan('stock.php')">STOCK</div>
-      <div class="navItem" onclick="navMan('sales.php')">SALES</div>
-      <div class="menuSep"></div>
-      <div class="navItem" onclick="navMan('login.php?killses=true')">Logout</div>
+function build_navBlock() {
+  isset($_COOKIE['prod_id'])? $itmID = $_COOKIE['prod_id'] : $itmID = "";
+  $splitItmID = explode("@prod", $itmID);
+  $numItemsCart = count($splitItmID)-1;
+  global $displayName;
+	isset($_SESSION["isAdmin"])?
+		$isAdmin = $_SESSION["isAdmin"] :
+		$isAdmin = "";
+	?>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">eCommerce</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarText">
+      <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" onclick="navMan('index.php')">Home <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="navMan('stock.php')">Stock</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="navMan('sales.php')">Sales</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="navMan('users.php')">Users</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" onclick="navMan('products.php')">Products</a>
+        </li>             
+      </ul>
+      <span class="navbar-text">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+            <a class="nav-link btn btn-info" onclick="navMan('checkout.php')"><i class="fa fa-shopping-cart"></i>  <span class="badge badge-light"><?php echo $numItemsCart; ?></span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn btn-outline-danger" onclick="navMan('login.php?killses=true')"> Logout</a>
+          </li>                
+        </ul>
+      </span>
     </div>
+  </nav>
 <?PHP
 }
 
@@ -132,7 +203,7 @@ function build_navBlock() { ?>
  * @param int $strength
  * @return string
  */
-function gen_ID($prefix='',$length=10, $strength=0) {
+function gen_ID($prefix='',$length=3, $strength=0) {
   $final_id='';
   for($i=0;$i< $length;$i++)
   {
