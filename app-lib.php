@@ -10,14 +10,16 @@ date_default_timezone_set('Australia/Queensland');
  */
 
 // Database instance variable
+// Start the session
+session_name("lpaecomms");
+session_start();
 $db = null;
 $displayName = "";
 $numItemsCart = 0;
 
 
-// Start the session
-session_name("lpaecomms");
-session_start();
+
+
 
 isset($_SESSION["authUser"])?
   $authUser = $_SESSION["authUser"] :
